@@ -85,7 +85,7 @@ pair<HandRanks, CardRanks> ofAKind(const vector<Card>& hand) { // Return a pair 
 CardRanks findHighestCard(const vector<Card>& hand) { // returns highest card  
     CardRanks bestRank = CardRanks::Invalid;
     for(const Card& c: hand) {
-        if(c.rank > bestRank) {
+        if(static_cast<int>(c.rank) > static_cast<int>(bestRank)) {
             bestRank = c.rank;
         }
     }
@@ -93,12 +93,97 @@ CardRanks findHighestCard(const vector<Card>& hand) { // returns highest card
 }
 
 CardRanks isStraight(const vector<Card>& hand) { // Return the highest card rank of a straight or -1
+    int J = 0;
+    std::vector<int> ranks;
+    ranks.reserve(5);
+    for (const auto& c : hand) {
+        if (c.joker) { ++J; continue; }
+        ranks.push_back(static_cast<int>(c.rank));
+    }
+
+    std::sort(ranks.begin(), ranks.end());
+    ranks.erase(std::unique(ranks.begin(), ranks.end()), ranks.end()); // Only keep unique rank values
+
+    if (ranks.empty()) return (J >= 5) ? CardRanks::Ace : CardRanks::Invalid;
+
+    // Helper: membership test on sorted vector
+    auto has = [&](int r)->bool {
+        return std::binary_search(ranks.begin(), ranks.end(), r);
+    }; 
+
+    // Try non-wheel straights: high from Ace(14) down to 6
+    for (int high = 14; high >= 6; --high) {
+        int missing = 0;
+        for (int r = high - 4; r <= high; ++r) {
+            if (!has(r)) ++missing;
+        }
+        if (missing <= J) return static_cast<CardRanks>(high);
+    }
+
+    // Wheel (A-2-3-4-5): high card is Five
+    bool hasAce = has(14);
+    if (hasAce) {
+        int have = 0;
+        for (int r = 2; r <= 5; ++r) if (has(r)) ++have;
+        int missing = 5 - (have + 1); // +1 for Ace acting as 1
+        if (missing <= J) return CardRanks::Five;
+    }
+
     return CardRanks::Invalid;
+
 }
 
-Card isFlush(const vector<Card>& hand) { // Return the highest card of a flush or -1
-    return { CardRanks::Invalid, Suit::Invalid, false };
+Card isFlush(const std::vector<Card>& hand) {
+    if (hand.size() != 5) return { CardRanks::Invalid, Suit::Invalid, false };
+
+    int J = 0;
+    int suitCount[4] = {0,0,0,0}; 
+    CardRanks hiInSuit[4] = { CardRanks::Invalid, CardRanks::Invalid,
+                              CardRanks::Invalid, CardRanks::Invalid };
+
+    for (const auto& c : hand) {
+        if (c.joker) { ++J; continue; }
+        int s = static_cast<int>(c.suit);  
+        if (s >= 0 && s < 4) {
+            ++suitCount[s];
+            if (static_cast<int>(c.rank) > static_cast<int>(hiInSuit[s])) {
+                hiInSuit[s] = c.rank;
+            }
+        }
+    }
+
+    // Find the best flush candidate: suit with (count+J>=5) and highest hiInSuit
+    int bestSuit = -1;
+    CardRanks bestHigh = CardRanks::Invalid;
+
+    for (int s = 0; s < 4; ++s) {
+        if (suitCount[s] + J >= 5) {
+            // if we have no natural card in that suit (all jokers), treat high as Ace
+            CardRanks hi = (hiInSuit[s] == CardRanks::Invalid) ? CardRanks::Ace : hiInSuit[s];
+
+            if (bestSuit == -1 ||
+                static_cast<int>(hi) > static_cast<int>(bestHigh) ||
+               (static_cast<int>(hi) == static_cast<int>(bestHigh) && s > bestSuit)) {
+                bestSuit = s;
+                bestHigh = hi;
+            }
+        }
+    }
+
+    if (bestSuit == -1) {
+        return { CardRanks::Invalid, Suit::Invalid, false }; // no flush
+    }
+
+    // Map index back to Suit
+    Suit suitVal = (bestSuit == 0) ? Suit::Spades
+                  : (bestSuit == 1) ? Suit::Hearts
+                  : (bestSuit == 2) ? Suit::Diamonds
+                                    : Suit::Clubs;
+
+    // Return a representative "highest flush card" (joker=false is fine here)
+    return { bestHigh, suitVal, false };
 }
+
 
 pair<HandRanks, CardRanks> evaluateHand(const vector<Card>& hand) { // Returns the hand rank and highest card rank
     if (hand.size() != 2 && hand.size() != 5) {
