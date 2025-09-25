@@ -216,4 +216,5 @@ pair<HandRanks, CardRanks> evaluateHand(const vector<Card>& hand) { // Returns t
             }
         }
     }
+    return {HandRanks::Invalid, CardRanks::Invalid};
 }  

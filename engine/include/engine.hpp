@@ -1,7 +1,7 @@
 #include <array>
 #include <string>
 #include <vector>
-
+using namespace std;
 // ----- Core Enums -----
 enum class HandRanks { High = 0, Pair, TwoPair, ThreeKind, Straight, Flush, FullHouse, FourKind, StraightFlush, FiveAce, Invalid = -1};
 

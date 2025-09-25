@@ -16,15 +16,21 @@ target_include_directories(pai_gow_engine
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# CLI target: small executable that calls into the engine
-add_executable(pai_gow_cli
-  src/cli.cpp
+# Main target: small executable that calls into the engine
+add_executable(pai_gow_main
+  src/main.cpp
 )
 
-target_link_libraries(pai_gow_cli PRIVATE pai_gow_engine)
+target_link_libraries(pai_gow_main PRIVATE pai_gow_engine)
+
+add_executable(pai_gow_tests
+  src/tests.cpp
+)
+
+target_link_libraries(pai_gow_tests PRIVATE pai_gow_engine)
 
 # Optional: installation (so "make install" works)
-install(TARGETS pai_gow_engine pai_gow_cli
+install(TARGETS pai_gow_engine pai_gow_main
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
