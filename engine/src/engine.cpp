@@ -11,19 +11,18 @@
 
 using namespace std;
 
-int compareHand(pair<HandRanks, CardRanks> d_hand, pair<HandRanks, CardRanks> p_hand) { // Returns 1 for player wins, -1 for dealer wins, 0 for tie
+int compareHand(pair<HandRanks, CardRanks> d_hand, pair<HandRanks, CardRanks> p_hand) { // Returns 1 for player wins, -1 for dealer wins
     if(d_hand.first > p_hand.first) {
         return -1;
     } else if(d_hand.first < p_hand.first) {
         return 1;
     } else {
 
-        if(d_hand.second >= p_hand.second) {
+        if(d_hand.second > p_hand.second) {
             return -1;
-        } else {
+        } else if(d_hand.second > p_hand.second) {
             return 1;
-        }
-    }   
+    }
 }
 
 pair<HandRanks, CardRanks> ofAKind(const vector<Card>& hand) { // Return a pair representing how many cards of a kind there are.
@@ -215,4 +214,4 @@ pair<HandRanks, CardRanks> evaluateHand(const vector<Card>& hand) { // Returns t
         }
     }
     return {HandRanks::Invalid, CardRanks::Invalid};
-}  
+} 

@@ -10,4 +10,10 @@ struct Card {
     CardRanks rank;   // 2..14 (where 11=J, 12=Q, 13=K, 14=A)
     Suit suit;   // 0=♠, 1=♥, 2=♦, 3=♣ ; use -1 if Joker
     bool joker; // true = Joker card
+
+     // Constructor for normal cards
+    Card(Suit s, CardRanks r) : rank(r), suit(s), joker(false) {} 
+
+    // Constructor for jokers
+    Card() : rank(CardRanks::Invalid), suit(Suit::Invalid), joker(true) {}
 };

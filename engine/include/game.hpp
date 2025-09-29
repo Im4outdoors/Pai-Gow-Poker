@@ -11,4 +11,5 @@ struct Game {
     void initializeDeck();   // fill deck with 52 + jokers
     void shuffleDeck();
     void dealHands();
+    void evaluateRound();
 };

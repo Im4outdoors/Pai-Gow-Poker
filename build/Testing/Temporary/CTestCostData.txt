@@ -1,2 +1,2 @@
-pai_gow_tests 3 0.00280693
+pai_gow_tests 5 0.00147154
 ---
