@@ -175,7 +175,7 @@ static void test_flush() {
 }
 
 static void test_evaluate_and_compare() {
-    // Straight Flush vs Four of a Kind
+    // Straight Flush (player) vs Four of a Kind (dealer) → player wins
     vector<Card> sf = {
         C(CardRanks::Ten,  Suit::Spades),
         C(CardRanks::Jack, Suit::Spades),
@@ -190,22 +190,88 @@ static void test_evaluate_and_compare() {
         C(CardRanks::Nine, Suit::Diamonds),
         C(CardRanks::Two,  Suit::Clubs)
     };
-    auto ev1 = evaluateHand(sf);
-    auto ev2 = evaluateHand(quads);
-    ASSERT_EQ(ev1.first, HandRanks::StraightFlush);
-    ASSERT_EQ(ev2.first, HandRanks::FourKind);
+    auto ev_player_sf = evaluateHand(sf);
+    auto ev_dealer_quads = evaluateHand(quads);
+    ASSERT_EQ(ev_player_sf.first, HandRanks::StraightFlush);
+    ASSERT_EQ(ev_dealer_quads.first, HandRanks::FourKind);
+    {
+        int cmp = compareHand(ev_dealer_quads, ev_player_sf); // dealer vs player
+        ASSERT_TRUE(cmp == 1); // player wins
+    }
 
-    // compareHand returns +1 player win / -1 dealer win / 0 tie (per your comment earlier)
-    int cmp = compareHand(ev2, ev1); // dealer=quads, player=SF → player should win
-    ASSERT_TRUE(cmp == 1);
+    // --- NEW: Dealer wins exact ties ---
+    // Dealer: Pair of Kings (low hand), Player: Pair of Kings (low hand)
+    vector<Card> dealer_tie = { C(CardRanks::King, Suit::Hearts), C(CardRanks::King, Suit::Clubs) };
+    vector<Card> player_tie = { C(CardRanks::King, Suit::Spades), C(CardRanks::King, Suit::Diamonds) };
+    auto d_tie = evaluateHand(dealer_tie);
+    auto p_tie = evaluateHand(player_tie);
+    ASSERT_EQ(d_tie.first, HandRanks::Pair);
+    ASSERT_EQ(p_tie.first, HandRanks::Pair);
+    ASSERT_EQ(d_tie.second, CardRanks::King);
+    ASSERT_EQ(p_tie.second, CardRanks::King);
+    {
+        int cmp = compareHand(d_tie, p_tie);
+        ASSERT_TRUE(cmp == -1); // dealer wins ties
+    }
+
+    // --- NEW: Same rank, dealer higher kicker → dealer wins ---
+    // Dealer: Pair of Queens, Player: Pair of Jacks
+    vector<Card> dealer_higher = { C(CardRanks::Queen, Suit::Spades), C(CardRanks::Queen, Suit::Hearts) };
+    vector<Card> player_lower  = { C(CardRanks::Jack,  Suit::Spades), C(CardRanks::Jack,  Suit::Hearts) };
+    auto d_hi = evaluateHand(dealer_higher);
+    auto p_lo = evaluateHand(player_lower);
+    ASSERT_EQ(d_hi.first, HandRanks::Pair);
+    ASSERT_EQ(p_lo.first, HandRanks::Pair);
+    {
+        int cmp = compareHand(d_hi, p_lo);
+        ASSERT_TRUE(cmp == -1); // dealer's pair (Q) > player's pair (J)
+    }
+
+    // --- NEW: Same rank, player higher kicker → player wins ---
+    // Dealer: Pair of Tens, Player: Pair of Jacks
+    vector<Card> dealer_lower = { C(CardRanks::Ten,   Suit::Spades), C(CardRanks::Ten,   Suit::Hearts) };
+    vector<Card> player_higher= { C(CardRanks::Jack,  Suit::Spades), C(CardRanks::Jack,  Suit::Hearts) };
+    auto d_lo = evaluateHand(dealer_lower);
+    auto p_hi = evaluateHand(player_higher);
+    ASSERT_EQ(d_lo.first, HandRanks::Pair);
+    ASSERT_EQ(p_hi.first, HandRanks::Pair);
+    {
+        int cmp = compareHand(d_lo, p_hi);
+        ASSERT_TRUE(cmp == 1); // player wins (J > T)
+    }
 }
 
-int main() {
-    test_low_hand();
-    test_ofAKind();
-    test_straight();
-    test_flush();
-    test_evaluate_and_compare();
-    cout << "All tests passed\n";
+// --- registry of tests ---
+using TestFn = void(*)();
+struct NamedTest { const char* name; TestFn fn; };
+
+static NamedTest kTests[] = {
+    {"low_hand",            &test_low_hand},
+    {"of_a_kind",           &test_ofAKind},
+    {"straight",            &test_straight},
+    {"flush",               &test_flush},
+    {"eval_compare",        &test_evaluate_and_compare},
+};
+
+static void run_one(const NamedTest& t) {
+    std::cout << "[ RUN      ] " << t.name << "\n";
+    t.fn(); // your ASSERT_* will exit(1) on failure
+    std::cout << "[       OK ] " << t.name << "\n";
+}
+
+int main(int argc, char** argv) {
+    if (argc > 1) {
+        // run only the named test
+        std::string name = argv[1];
+        for (auto& t : kTests) {
+            if (name == t.name) { run_one(t); std::cout << "All tests passed!\n"; return 0; }
+        }
+        std::cerr << "Unknown test: " << name << "\n";
+        return 2;
+    }
+    // run all
+    for (auto& t : kTests) run_one(t);
+    std::cout << "All tests passed!\n";
     return 0;
 }
+

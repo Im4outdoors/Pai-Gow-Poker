@@ -1,0 +1,24 @@
+^C:\USERS\OLSON\DESKTOP\PROJECTS\PAI-GOW-POKER\BUILD\CMAKEFILES\65BE71C8DB26AFFC55620754E107B761\CHECK.RULE
+setlocal
+cd C:\Users\olson\Desktop\Projects\Pai-Gow-Poker\build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\ctest.exe" -C Debug --output-on-failure -V
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\OLSON\DESKTOP\PROJECTS\PAI-GOW-POKER\ENGINE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/olson/Desktop/Projects/Pai-Gow-Poker/engine -BC:/Users/olson/Desktop/Projects/Pai-Gow-Poker/build --check-stamp-file C:/Users/olson/Desktop/Projects/Pai-Gow-Poker/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

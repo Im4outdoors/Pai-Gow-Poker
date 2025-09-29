@@ -18,14 +18,12 @@ int compareHand(pair<HandRanks, CardRanks> d_hand, pair<HandRanks, CardRanks> p_
         return 1;
     } else {
 
-        if(d_hand.second > p_hand.second) {
+        if(d_hand.second >= p_hand.second) {
             return -1;
-        } else if(d_hand.second > p_hand.second) {
-            return 1;
         } else {
-            return 0;
+            return 1;
         }
-    }
+    }   
 }
 
 pair<HandRanks, CardRanks> ofAKind(const vector<Card>& hand) { // Return a pair representing how many cards of a kind there are.

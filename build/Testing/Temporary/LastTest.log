@@ -1,0 +1,29 @@
+Start testing: Sep 29 03:41 Mountain Daylight Time
+----------------------------------------------------------
+1/1 Testing: pai_gow_tests
+1/1 Test: pai_gow_tests
+Command: "C:/Users/olson/Desktop/Projects/Pai-Gow-Poker/build/bin/Debug/pai_gow_tests.exe"
+Directory: C:/Users/olson/Desktop/Projects/Pai-Gow-Poker/build
+"pai_gow_tests" start time: Sep 29 03:41 Mountain Daylight Time
+Output:
+----------------------------------------------------------
+[ RUN      ] low_hand
+[       OK ] low_hand
+[ RUN      ] of_a_kind
+[       OK ] of_a_kind
+[ RUN      ] straight
+[       OK ] straight
+[ RUN      ] flush
+[       OK ] flush
+[ RUN      ] eval_compare
+[       OK ] eval_compare
+All tests passed!
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"pai_gow_tests" end time: Sep 29 03:41 Mountain Daylight Time
+"pai_gow_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 29 03:41 Mountain Daylight Time
