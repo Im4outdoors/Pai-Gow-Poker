@@ -16,18 +16,13 @@ engine/
 
 ## Dependencies
 
-### Option A: Native build
+### Native build
 - **CMake** ≥ 3.15  
 - **C++ compiler** with C++17 (any of):
   - Windows: **Visual Studio 2022** (MSVC) _or_ MinGW-w64
   - macOS: **Xcode/Clang**
   - Linux: **GCC** or **Clang**
 - (Optional) **Ninja** for faster builds (`-G Ninja`)
-
-### Option B: Docker (no local toolchain needed)
-- **Docker** (Desktop or Engine)
-
----
 
 ## Build & run (native)
 
@@ -75,45 +70,6 @@ cmake -S engine -B build -DBUILD_TESTS=OFF
 ```
 
 ---
-
-## Docker
-
-Build an image that compiles and runs tests inside the container (no local dependencies):
-
-**Dockerfile** (place at repo root, next to `engine/`):
-```dockerfile
-FROM debian:bookworm-slim AS build
-RUN apt-get update && apt-get install -y --no-install-recommends       build-essential cmake ninja-build &&     rm -rf /var/lib/apt/lists/*
-WORKDIR /app
-COPY engine/ engine/
-RUN cmake -S engine -B build -G Ninja -DBUILD_TESTS=ON
-RUN cmake --build build
-RUN ctest --test-dir build --output-on-failure -V
-
-FROM debian:bookworm-slim
-WORKDIR /app
-COPY --from=build /app/build/bin/pai_gow_main /usr/local/bin/pai_gow_main
-COPY --from=build /app/build/bin/pai_gow_tests /usr/local/bin/pai_gow_tests
-ENTRYPOINT ["/usr/local/bin/pai_gow_main"]
-```
-
-**Build & run:**
-```bash
-docker build -t pai-gow .
-docker run --rm pai-gow                          # runs main
-docker run --rm --entrypoint pai_gow_tests pai-gow  # runs tests
-```
-
-(Optional) `.dockerignore`:
-```
-build/
-.git/
-.gitignore
-.DS_Store
-```
-
----
-
 ## Running just one test (via CTest)
 
 Tests are grouped inside `pai_gow_tests`. You can run all or filter:
