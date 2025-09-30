@@ -18,10 +18,11 @@ int compareHand(pair<HandRanks, CardRanks> d_hand, pair<HandRanks, CardRanks> p_
         return 1;
     } else {
 
-        if(d_hand.second > p_hand.second) {
+        if(d_hand.second >= p_hand.second) {
             return -1;
-        } else if(d_hand.second > p_hand.second) {
+        } else {
             return 1;
+        }
     }
 }
 
@@ -131,7 +132,7 @@ CardRanks isStraight(const vector<Card>& hand) { // Return the highest card rank
 }
 
 Card isFlush(const std::vector<Card>& hand) {
-    if (hand.size() != 5) return { CardRanks::Invalid, Suit::Invalid, false };
+    if (hand.size() != 5) return { CardRanks::Invalid, Suit::Invalid};
 
     int J = 0;
     int suitCount[4] = {0,0,0,0}; 
@@ -168,7 +169,7 @@ Card isFlush(const std::vector<Card>& hand) {
     }
 
     if (bestSuit == -1) {
-        return { CardRanks::Invalid, Suit::Invalid, false }; // no flush
+        return { CardRanks::Invalid, Suit::Invalid}; // no flush
     }
 
     // Map index back to Suit
@@ -178,7 +179,7 @@ Card isFlush(const std::vector<Card>& hand) {
                                     : Suit::Clubs;
 
     // Return a representative "highest flush card" (joker=false is fine here)
-    return { bestHigh, suitVal, false };
+    return { bestHigh, suitVal };
 }
 
 

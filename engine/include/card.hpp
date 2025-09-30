@@ -12,7 +12,7 @@ struct Card {
     bool joker; // true = Joker card
 
      // Constructor for normal cards
-    Card(Suit s, CardRanks r) : rank(r), suit(s), joker(false) {} 
+    Card(CardRanks r, Suit s) : rank(r), suit(s), joker(false) {} 
 
     // Constructor for jokers
     Card() : rank(CardRanks::Invalid), suit(Suit::Invalid), joker(true) {}

@@ -16,7 +16,7 @@ struct Game {
     void initializeDeck() { // fill deck with 52 + jokers
         for(int i = 0; i < 4; i++) { // Suit
             for(int j = 2; j <= 14; j++) { // Card Rank
-                deck.push_back(Card(static_cast<Suit>(i), static_cast<CardRanks>(j)));
+                deck.push_back(Card(static_cast<CardRanks>(j), static_cast<Suit>(i)));
             }
         }
         deck.push_back(Card()); // Joker

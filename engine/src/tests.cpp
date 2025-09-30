@@ -20,8 +20,8 @@ static int toInt(Suit s)      { return static_cast<int>(s); }
        << " | got=" << toInt(_va) << " expected=" << toInt(_vb) << "\n"; std::exit(1);} } while(0)
 
 // Convenience card builders
-static Card C(CardRanks r, Suit s) { return Card{r, s, false}; }
-static Card J() { return Card{CardRanks::Invalid, Suit::Invalid, true}; }
+static Card C(CardRanks r, Suit s) { return Card{r, s}; }
+static Card J() { return Card(); }
 
 // ---------- Individual tests ----------
 static void test_low_hand() {

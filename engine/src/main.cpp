@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 
-static Card C(CardRanks r, Suit s) { return Card{r, s, false}; }
-static Card J() { return Card{CardRanks::Invalid, Suit::Invalid, true}; }
+static Card C(CardRanks r, Suit s) { return Card{r, s}; }
+static Card J() { return Card(); }
 
 int main() {
     std::vector<Card> hand = {
