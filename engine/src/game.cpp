@@ -23,11 +23,9 @@ struct Game {
     }   
 
     static std::mt19937_64& rng() {
-        static std::mt19937_64 gen{
-            std::random_device{}()
-        };
+        static std::mt19937_64 gen{12345};  // fixed seed
         return gen;
-    }       
+    }  
 
     void shuffleDeck() {
         std::shuffle(deck.begin(), deck.end(), rng());
