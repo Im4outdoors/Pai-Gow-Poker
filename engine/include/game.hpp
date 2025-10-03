@@ -8,7 +8,14 @@ struct Game {
     std::vector<Player> players;
     int dealerIndex = 0;  // rotate each round
 
+    // Constructor
+    Game() {
+        initializeDeck(); 
+        initializePlayers();
+    } 
+
     void initializeDeck();   // fill deck with 52 + jokers
+    void initializePlayers();
     void shuffleDeck();
     void dealHands();
     void evaluateRound();

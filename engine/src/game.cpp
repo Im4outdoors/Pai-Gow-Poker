@@ -1,5 +1,6 @@
 // game.hpp
 #pragma once
+#include <string>
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -21,6 +22,12 @@ struct Game {
         }
         deck.push_back(Card()); // Joker
     }   
+
+    void initializePlayers() {
+        for(int i = 0; i < 7; i ++) {
+            players.push_back(Player(to_string(i)));
+        }
+    }
 
     static std::mt19937_64& rng() {
         static std::mt19937_64 gen{12345};  // fixed seed
